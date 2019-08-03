@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:survey_app/survey/model/survey.model.dart';
 import 'package:survey_app/survey/model/survey.question.model.dart';
+import 'package:survey_app/survey/provider/survey.provider.dart';
 import 'package:survey_app/survey/provider/survey.server.dart';
 
 class SurveyUi extends StatefulWidget {
@@ -8,7 +11,7 @@ class SurveyUi extends StatefulWidget {
 }
 
 class _SurveyUiState extends State<SurveyUi> {
-  List<SurveyQuestionModel> questions;
+  List<SurveyModel> surveyModels;
   bool isLoading = true;
 
   @override
@@ -16,12 +19,12 @@ class _SurveyUiState extends State<SurveyUi> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((a) {
-      getQuestions();
+      getSurveys();
     });
   }
 
-  getQuestions() async {
-    questions = await surveyServer.getQuestions();
+  getSurveys() async {
+    surveyModels = await Provider.of<SurveyProvider>(context).getSurveys();
     setState(() {
       isLoading = false;
     });
@@ -33,13 +36,24 @@ class _SurveyUiState extends State<SurveyUi> {
       appBar: AppBar(
         title: Text("Survey"),
       ),
-      body: Center(
-        child: (isLoading)
-            ? CircularProgressIndicator()
-            : (questions == null || questions.length == 0)
-                ? Text("No survey for today")
-                : Text("survey:${questions.length}"),
-      ),
+      body: (isLoading)
+          ? Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.white,
+              ),
+            )
+          : (surveyModels.length == 0)
+              ? Text("No survey for today")
+              : SingleChildScrollView(
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: surveyModels.length,
+                      itemBuilder: (context, index) {
+                        SurveyModel surveyModel = surveyModels[index];
+                        return ListTile(
+                          title: Text(surveyModel.title),
+                        );
+                      })),
     );
   }
 }

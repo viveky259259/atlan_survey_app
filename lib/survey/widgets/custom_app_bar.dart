@@ -24,7 +24,7 @@ class CustomAppBar extends StatelessWidget {
           Spacer(),
           Text(
             title,
-            style: TextStyle(color: Colors.white, fontSize: 24),
+            style: TextStyle(color: Colors.white, fontSize: 24,fontWeight: FontWeight.w600,letterSpacing: 2),
           ),
           Spacer(),
           (isEndNeeded)

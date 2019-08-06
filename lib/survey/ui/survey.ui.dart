@@ -49,8 +49,8 @@ class _SurveyUiState extends State<SurveyUi> {
         body: Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(colors: [
-        Color(0xff00a75d),
-        Color(0xff4b9775),
+        Color(0xff5dcd8d),
+        Color(0xff51b998),
       ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
       child: Stack(
         children: <Widget>[
@@ -118,7 +118,7 @@ class _SurveyUiState extends State<SurveyUi> {
                           ),
                         ),
                         SizedBox(
-                            width: MediaQuery.of(context).size.width - 32,
+                            width: MediaQuery.of(context).size.width*0.85,
                             child: PageIndicator(
                                 currentIndexOfPage, surveyModels.length)),
                         SizedBox(

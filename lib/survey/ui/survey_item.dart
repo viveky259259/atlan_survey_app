@@ -109,7 +109,7 @@ class _SurveyItemState extends State<SurveyItem> {
                                   answer,
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 16,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.w600),
                                 ))
                           ],

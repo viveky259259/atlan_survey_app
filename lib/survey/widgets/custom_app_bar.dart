@@ -4,8 +4,11 @@ class CustomAppBar extends StatelessWidget {
   final String title;
   final bool isBackNeeded;
   final bool isEndNeeded;
+  final bool isHistoryNeeded;
+  final Function onHistoryClick;
 
-  CustomAppBar(this.title, this.isBackNeeded, this.isEndNeeded);
+  CustomAppBar(this.title, this.isBackNeeded, this.isEndNeeded,
+      {this.isHistoryNeeded = false, this.onHistoryClick});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,8 @@ class CustomAppBar extends StatelessWidget {
           Spacer(),
           Text(
             title,
-            style: TextStyle(color: Colors.white, fontSize: 24,fontWeight: FontWeight.w600,letterSpacing: 2),
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.w600, fontSize: 24),
           ),
           Spacer(),
           (isEndNeeded)
@@ -32,6 +36,14 @@ class CustomAppBar extends StatelessWidget {
                   Icons.close,
                   color: Colors.white,
                 )
+              : SizedBox(),
+          (isHistoryNeeded)
+              ? IconButton(
+                  onPressed: onHistoryClick,
+                  icon: Icon(
+                    Icons.history,
+                    color: Colors.white,
+                  ))
               : SizedBox()
         ],
       ),

@@ -17,6 +17,8 @@ class _SurveyUiState extends State<SurveyUi> {
   PageController pageController = PageController();
   double currentPageValue = 0.0;
   int currentIndexOfPage = 0;
+  Color bgColor = Color(0xff6200ee);
+  Color bgDarkColor = Color(0xff3700b3);
 
   @override
   void initState() {
@@ -31,6 +33,12 @@ class _SurveyUiState extends State<SurveyUi> {
     setState(() {
       isLoading = false;
     });
+//    List<SurveyQuestionModel> oldRecords =
+//        await SurveyDatabaseProvider.db.getAllQuestions();
+//    setState(() {
+//      isLoading = false;
+//      surveyModels = oldRecords;
+//    });
   }
 
   saveAnswers() {
@@ -43,104 +51,161 @@ class _SurveyUiState extends State<SurveyUi> {
         duration: Duration(seconds: 1), curve: ElasticOutCurve(1));
   }
 
+  onClickPageIndicatorItem(int index) {
+    pageController.animateToPage(index,
+        duration: Duration(seconds: 1), curve: ElasticOutCurve(1));
+  }
+
+  onHistoryClick() {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [
-        Color(0xff5dcd8d),
-        Color(0xff51b998),
-      ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-      child: Stack(
-        children: <Widget>[
-          (isLoading)
-              ? SizedBox()
-              : (surveyModels.length == 0)
-                  ? Text("No survey for today")
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        CustomAppBar("Survey", false, false),
-                        SizedBox(height: 24),
-                        Expanded(
-                          child: PageView.builder(
-                            itemCount: surveyModels.length,
-                            controller: pageController,
-                            onPageChanged: (index) {
-                              setState(() {
-                                currentIndexOfPage = index;
-                              });
-                            },
-                            itemBuilder: (context, index) {
-//                            currentIndexOfPage = index;
-                              SurveyQuestionModel surveyQuestionModel =
-                                  surveyModels[index];
-
-                              return SurveyItem(surveyQuestionModel,
-                                  surveyModels.length, index);
-                            },
-                            pageSnapping: true,
-                            physics: BouncingScrollPhysics(),
+//      appBar: AppBar(
+//        title: Text("Test"),
+//        actions: <Widget>[
+//          IconButton(
+//            icon: Icon(Icons.add),
+//            onPressed: () async {
+//              if (surveyModels != null && surveyModels.length > 0) {
+//                surveyModels.forEach((each) async {
+//                  await SurveyDatabaseProvider.db.addSurveyToDatabase(each);
+//                });
+//              }
+//            },
+//          ),
+//          IconButton(
+//            icon: Icon(Icons.get_app),
+//            onPressed: () async {
+//              List<SurveyQuestionModel> oldRecords =
+//                  await SurveyDatabaseProvider.db.getAllQuestions();
+//              setState(() {
+//                isLoading = false;
+//                surveyModels = oldRecords;
+//              });
+//              print(oldRecords.length);
+//            },
+//          )
+//        ],
+//      ),
+      body: SingleChildScrollView(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [bgColor, bgColor],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter)),
+          child: Stack(
+            children: <Widget>[
+              (isLoading)
+                  ? Positioned(
+                      top: 0,
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                          child: CircularProgressIndicator(
+//                  backgroundColor: Color(0xffFFDE01),
+                        valueColor:
+                            new AlwaysStoppedAnimation<Color>(Colors.white),
+                      )),
+                    )
+                  : SizedBox(),
+              (isLoading)
+                  ? SizedBox()
+                  : (surveyModels.length == 0)
+                      ? Center(
+                          child: Text(
+                            "No surveys for today",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600),
                           ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width - 32,
-                          margin: EdgeInsets.all(16),
-                          child: RaisedButton(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16))),
-                            padding: EdgeInsets.all(16),
-                            onPressed: () {
-                              if (currentIndexOfPage ==
-                                  surveyModels.length - 1) {
-                                saveAnswers();
-                              } else {
-                                doNext();
-                              }
-                            },
-                            child:
-                                (currentIndexOfPage == surveyModels.length - 1)
-                                    ? Text("Submit",
-                                        style: TextStyle(
-                                            color: Colors.green.shade900,
-                                            fontSize: 20,
-                                            letterSpacing: 2,
-                                            fontWeight: FontWeight.bold))
-                                    : Text("Next",
-                                        style: TextStyle(
-                                            color: Colors.green.shade900,
-                                            fontSize: 20,
-                                            letterSpacing: 2,
-                                            fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width*0.85,
-                            child: PageIndicator(
-                                currentIndexOfPage, surveyModels.length)),
-                        SizedBox(
-                          height: 32,
                         )
-                      ],
-                    ),
-          Positioned(
-            top: MediaQuery.of(context).size.height / 2,
-            left: MediaQuery.of(context).size.width / 2,
-            child: (isLoading)
-                ? Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                : SizedBox(),
-          )
-        ],
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            CustomAppBar(
+                              "Survey",
+                              false,
+                              false,
+                              isHistoryNeeded: true,
+                              onHistoryClick: onHistoryClick,
+                            ),
+                            SizedBox(height: 24),
+                            Expanded(
+                              child: PageView.builder(
+                                itemCount: surveyModels.length,
+                                controller: pageController,
+                                onPageChanged: (index) {
+                                  setState(() {
+                                    currentIndexOfPage = index;
+                                  });
+                                },
+                                itemBuilder: (context, index) {
+                                  SurveyQuestionModel surveyQuestionModel =
+                                      surveyModels[index];
+
+                                  return SurveyItem(surveyQuestionModel,
+                                      surveyModels.length, index);
+                                },
+                                pageSnapping: true,
+                                physics: BouncingScrollPhysics(),
+                              ),
+                            ),
+                          ],
+                        ),
+            ],
+          ),
+        ),
       ),
-    ));
+      bottomNavigationBar: BottomAppBar(
+        color: bgColor,
+        child: (isLoading || surveyModels == null || surveyModels.length == 0)
+            ? SizedBox()
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width - 32,
+                    margin: EdgeInsets.all(16),
+                    child: RaisedButton(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(16))),
+                      padding: EdgeInsets.all(16),
+                      onPressed: () {
+                        if (currentIndexOfPage == surveyModels.length - 1) {
+                          saveAnswers();
+                        } else {
+                          doNext();
+                        }
+                      },
+                      child: (currentIndexOfPage == surveyModels.length - 1)
+                          ? Text("Submit",
+                              style: TextStyle(
+                                  color: bgDarkColor,
+                                  fontSize: 20,
+                                  letterSpacing: 2,
+                                  fontWeight: FontWeight.bold))
+                          : Text("Next",
+                              style: TextStyle(
+                                  color: bgDarkColor,
+                                  fontSize: 20,
+                                  letterSpacing: 2,
+                                  fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  SizedBox(
+                      width: MediaQuery.of(context).size.width - 32,
+                      child: PageIndicator(currentIndexOfPage,
+                          surveyModels.length, onClickPageIndicatorItem)),
+                ],
+              ),
+      ),
+    );
   }
 }

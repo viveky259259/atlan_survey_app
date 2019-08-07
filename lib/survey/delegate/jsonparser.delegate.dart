@@ -15,7 +15,8 @@ class JsonParserDelegate {
       answers = data["answers"].toString().split(",");
     }
 
-    return SurveyQuestionModel(question, answers, type, id);
+    return SurveyQuestionModel(question, answers, type, id)
+      ..questionId = data["id"];
   }
 }
 

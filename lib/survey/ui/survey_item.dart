@@ -14,7 +14,9 @@ class SurveyItem extends StatefulWidget {
 
 class _SurveyItemState extends State<SurveyItem> {
   Widget getCheckerIcon(int index) {
-    if (widget.surveyQuestionModel.type.compareTo("single") == 0) {
+    if (widget.surveyQuestionModel.selectionType
+            .compareTo(AnswerSelectionType.SINGLE_ANSWER) ==
+        0) {
       if (widget.surveyQuestionModel.selectedAnsIndexSingle == -1 ||
           widget.surveyQuestionModel.selectedAnsIndexSingle != index) {
         return Icon(
@@ -24,7 +26,12 @@ class _SurveyItemState extends State<SurveyItem> {
       } else {
         return Icon(Icons.radio_button_checked, color: Colors.white);
       }
-    } else if (widget.surveyQuestionModel.type.compareTo("multiple") == 0) {
+    } else if (widget.surveyQuestionModel.selectionType
+            .compareTo(AnswerSelectionType.MULTIPLE_ANSWER) ==
+        0) {
+      if (widget.surveyQuestionModel.selectedAnsIndexForMultiple == null) {
+        return Icon(Icons.check_box_outline_blank, color: Colors.white);
+      }
       if (widget.surveyQuestionModel.selectedAnsIndexForMultiple.length == 0 ||
           !widget.surveyQuestionModel.selectedAnsIndexForMultiple
               .contains(index)) {
@@ -37,16 +44,10 @@ class _SurveyItemState extends State<SurveyItem> {
   }
 
   updateAnswerStatus(index) {
-    if (widget.surveyQuestionModel.type.compareTo("single") == 0) {
-//      if (widget.surveyQuestionModel.selectedAnsIndexSingle == -1 &&
-//          widget.surveyQuestionModel.selectedAnsIndexSingle != index) {
-//        widget.surveyQuestionModel.selectedAnsIndexSingle = index;
-//
-//      } else {
-//        widget.surveyQuestionModel.selectedAnsIndexSingle = index;
-//      }
+    if (widget.surveyQuestionModel.selectionType.compareTo("single") == 0) {
       widget.surveyQuestionModel.selectedAnsIndexSingle = index;
-    } else if (widget.surveyQuestionModel.type.compareTo("multiple") == 0) {
+    } else if (widget.surveyQuestionModel.selectionType.compareTo("multiple") ==
+        0) {
       if (widget.surveyQuestionModel.selectedAnsIndexForMultiple
           .contains(index)) {
         widget.surveyQuestionModel.selectedAnsIndexForMultiple.remove(index);
@@ -86,6 +87,7 @@ class _SurveyItemState extends State<SurveyItem> {
           child: ListView.builder(
               shrinkWrap: true,
               itemCount: widget.surveyQuestionModel.answers.length,
+              physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 String answer = widget.surveyQuestionModel.answers[index];
                 return InkWell(
@@ -97,7 +99,7 @@ class _SurveyItemState extends State<SurveyItem> {
                     children: <Widget>[
                       Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -109,7 +111,7 @@ class _SurveyItemState extends State<SurveyItem> {
                                   answer,
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 16,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.w600),
                                 ))
                           ],
@@ -119,7 +121,7 @@ class _SurveyItemState extends State<SurveyItem> {
                           child: ((index + 1) <
                                   widget.surveyQuestionModel.answers.length)
                               ? Divider(
-                                  color: Colors.white,
+                                  color: Colors.white30,
                                 )
                               : SizedBox(),
                           padding: EdgeInsets.symmetric(horizontal: 16)),
@@ -127,7 +129,7 @@ class _SurveyItemState extends State<SurveyItem> {
                   ),
                 );
               }),
-        )
+        ),
       ],
     );
   }

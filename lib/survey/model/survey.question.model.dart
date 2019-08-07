@@ -2,23 +2,28 @@ import 'package:survey_app/survey/delegate/jsonparser.delegate.dart';
 
 class SurveyQuestionModel {
   final String question;
-  final List<String> answers;
-  final String type; //single,multiple
+  List<String> answers;
+  final String selectionType; //single,multiple
   int selectedAnsIndexSingle;
   String surveyId;
+  int questionId;
   List<int> selectedAnsIndexForMultiple = List();
 
-  SurveyQuestionModel(this.question, this.answers, this.type, this.surveyId,
-      {this.selectedAnsIndexSingle = -1, selectedAnsIndexForMultiple});
+  SurveyQuestionModel(
+      this.question, this.answers, this.selectionType, this.surveyId,
+      {this.selectedAnsIndexSingle = -1,
+      this.selectedAnsIndexForMultiple,
+      this.questionId});
 
-  factory SurveyQuestionModel.fromMap(Map<String, dynamic> json,bool isFromServer) {
-    return jsonParserDelegate.getQuestionFromJson(json,isFromServer);
+  factory SurveyQuestionModel.fromMap(
+      Map<String, dynamic> json, bool isFromServer) {
+    return jsonParserDelegate.getQuestionFromJson(json, isFromServer);
   }
 
   toMap() {
     return {
       "question": question,
-      "selection_type": type,
+      "selection_type": selectionType,
       "survey_id": surveyId,
       "answers": answers.toString(),
       "selectedAnsIndexSingle": selectedAnsIndexSingle,
@@ -26,15 +31,31 @@ class SurveyQuestionModel {
     };
   }
 
-  toMapForTable() {
+  toMapForQuestionTable() {
     return {
       "question": question,
-      "selection_type": type,
+      "selection_type": selectionType,
       "survey_id": surveyId,
-      "answers": getAnswerInString()
     };
   }
 
+  List<Map<String, dynamic>> toMapForAnswerTable() {
+    List<Map<String, dynamic>> list = List();
+
+    answers.forEach((each) {
+      list.add(
+          {"survey_id": surveyId, "question_id": questionId, "answer": each});
+    });
+    return list;
+
+//    if (selectionType == AnswerSelectionType.SINGLE_ANSWER) {
+//      return {
+//        "survey_id":surveyId,
+//        "question_id":questionId,
+//        "answer":answers
+//      };
+//    } else if (selectionType == AnswerSelectionType.MULTIPLE_ANSWER) {}
+  }
 
   getAnswerInString() {
     StringBuffer stringBuffer = StringBuffer();
@@ -49,4 +70,9 @@ class SurveyQuestionModel {
     print(stringBuffer.toString());
     return stringBuffer.toString();
   }
+}
+
+class AnswerSelectionType {
+  static const String SINGLE_ANSWER = "single";
+  static const String MULTIPLE_ANSWER = "multiple";
 }

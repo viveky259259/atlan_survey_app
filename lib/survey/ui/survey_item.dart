@@ -48,11 +48,13 @@ class _SurveyItemState extends State<SurveyItem> {
       widget.surveyQuestionModel.selectedAnsIndexSingle = index;
     } else if (widget.surveyQuestionModel.selectionType.compareTo("multiple") ==
         0) {
-      if (widget.surveyQuestionModel.selectedAnsIndexForMultiple
-          .contains(index)) {
+      if (widget.surveyQuestionModel.selectedAnsIndexForMultiple != null &&
+          widget.surveyQuestionModel.selectedAnsIndexForMultiple
+              .contains(index)) {
         widget.surveyQuestionModel.selectedAnsIndexForMultiple.remove(index);
-      } else
+      } else {
         widget.surveyQuestionModel.selectedAnsIndexForMultiple.add(index);
+      }
     }
     setState(() {});
   }
@@ -60,8 +62,6 @@ class _SurveyItemState extends State<SurveyItem> {
   @override
   Widget build(BuildContext context) {
     return Column(
-//      mainAxisAlignment: MainAxisAlignment.center,
-//      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
@@ -86,10 +86,11 @@ class _SurveyItemState extends State<SurveyItem> {
         Expanded(
           child: ListView.builder(
               shrinkWrap: true,
-              itemCount: widget.surveyQuestionModel.answers.length,
+              itemCount: widget.surveyQuestionModel.answerModels.length,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                String answer = widget.surveyQuestionModel.answers[index];
+                String answer =
+                    widget.surveyQuestionModel.answerModels[index].answer;
                 return InkWell(
                   onTap: () {
                     updateAnswerStatus(index);
@@ -119,7 +120,8 @@ class _SurveyItemState extends State<SurveyItem> {
                       ),
                       Padding(
                           child: ((index + 1) <
-                                  widget.surveyQuestionModel.answers.length)
+                                  widget
+                                      .surveyQuestionModel.answerModels.length)
                               ? Divider(
                                   color: Colors.white30,
                                 )

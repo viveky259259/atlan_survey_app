@@ -22,12 +22,20 @@ class SurveyProvider with ChangeNotifier {
           await SurveyDatabaseProvider.db.addSurveyToDatabase(each);
         }
       }
-      if (oldRecords == null) {
+      if (oldRecords == null || oldRecords.length == 0) {
         oldRecords = await SurveyDatabaseProvider.db
             .getQuestionBySurveyId(_surveys.first.surveyId);
       }
       return oldRecords;
     }
     return _surveys;
+  }
+
+  getSurveyHistory() async {
+    return await SurveyDatabaseProvider.db.getSavedSurvey();
+  }
+
+  saveSurvey(List<SurveyQuestionModel> questions) async {
+    return await SurveyDatabaseProvider.db.saveAnswers(questions);
   }
 }

@@ -1,8 +1,10 @@
 import 'package:survey_app/survey/delegate/jsonparser.delegate.dart';
+import 'package:survey_app/survey/model/survey.answer.model.dart';
 
 class SurveyQuestionModel {
   final String question;
-  List<String> answers;
+
+  List<SurveyAnswerModel> answerModels;
   final String selectionType; //single,multiple
   int selectedAnsIndexSingle;
   String surveyId;
@@ -10,25 +12,24 @@ class SurveyQuestionModel {
   List<int> selectedAnsIndexForMultiple = List();
 
   SurveyQuestionModel(
-      this.question, this.answers, this.selectionType, this.surveyId,
+      this.question, this.answerModels, this.selectionType, this.surveyId,
       {this.selectedAnsIndexSingle = -1,
       this.selectedAnsIndexForMultiple,
-      this.questionId});
+      this.questionId}) {
+    if (this.selectedAnsIndexForMultiple == null)
+      selectedAnsIndexForMultiple = [];
+  }
+
+  SurveyQuestionModel copyInstance() {
+    return SurveyQuestionModel(question, answerModels, selectionType, surveyId,
+        selectedAnsIndexSingle: selectedAnsIndexSingle,
+        questionId: questionId,
+        selectedAnsIndexForMultiple: selectedAnsIndexForMultiple);
+  }
 
   factory SurveyQuestionModel.fromMap(
       Map<String, dynamic> json, bool isFromServer) {
     return jsonParserDelegate.getQuestionFromJson(json, isFromServer);
-  }
-
-  toMap() {
-    return {
-      "question": question,
-      "selection_type": selectionType,
-      "survey_id": surveyId,
-      "answers": answers.toString(),
-      "selectedAnsIndexSingle": selectedAnsIndexSingle,
-      "selectedAnsIndexForMultiple": selectedAnsIndexForMultiple.toString(),
-    };
   }
 
   toMapForQuestionTable() {
@@ -39,12 +40,37 @@ class SurveyQuestionModel {
     };
   }
 
+  toMapForUserAnswerTable(int surveyedId) {
+    List<Map<String, dynamic>> list = List();
+    if (selectionType == AnswerSelectionType.SINGLE_ANSWER) {
+      list.add({
+        "question_id": questionId,
+        "answer_id": answerModels[selectedAnsIndexSingle].id,
+        "survey_id": surveyId,
+        "surveyed_count_id": surveyedId
+      });
+    } else {
+      selectedAnsIndexForMultiple.forEach((each) {
+        list.add({
+          "question_id": questionId,
+          "answer_id": answerModels[each].id,
+          "survey_id": surveyId,
+          "surveyed_count_id": surveyedId
+        });
+      });
+    }
+    return list;
+  }
+
   List<Map<String, dynamic>> toMapForAnswerTable() {
     List<Map<String, dynamic>> list = List();
 
-    answers.forEach((each) {
-      list.add(
-          {"survey_id": surveyId, "question_id": questionId, "answer": each});
+    answerModels.forEach((each) {
+      list.add({
+        "survey_id": surveyId,
+        "question_id": questionId,
+        "answer": each.answer
+      });
     });
     return list;
 
@@ -60,10 +86,10 @@ class SurveyQuestionModel {
   getAnswerInString() {
     StringBuffer stringBuffer = StringBuffer();
 
-    for (int i = 0; i < answers.length; i++) {
-      stringBuffer.write(answers[i]);
+    for (int i = 0; i < answerModels.length; i++) {
+      stringBuffer.write(answerModels[i].answer);
 
-      if (i != answers.length - 1) {
+      if (i != answerModels.length - 1) {
         stringBuffer.write(",");
       }
     }

@@ -22,7 +22,7 @@ class SurveyProvider with ChangeNotifier {
           await SurveyDatabaseProvider.db.addSurveyToDatabase(each);
         }
       }
-      if (oldRecords == null) {
+      if (oldRecords == null || oldRecords.length == 0) {
         oldRecords = await SurveyDatabaseProvider.db
             .getQuestionBySurveyId(_surveys.first.surveyId);
       }

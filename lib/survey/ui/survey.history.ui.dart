@@ -36,24 +36,81 @@ class _SurveyHistoryUiState extends State<SurveyHistoryUi> {
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: surveyModels.length,
-                itemBuilder: (context, index) {
-                  List<SurveyQuestionModel> eachSurveyList =
-                      surveyModels[index];
+            : (surveyModels == null || surveyModels.length == 0)
+                ? Center(
+                    child: Text("No "
+                        "History"),
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: surveyModels.length,
+                    itemBuilder: (context, index) {
+                      List<SurveyQuestionModel> eachSurveyList =
+                          surveyModels[index];
 
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: eachSurveyList.length,
-                      itemBuilder: (context, index) {
-                        SurveyQuestionModel questionModel =
-                            eachSurveyList[index];
-                        return ListTile(
-                          title: Text(questionModel.question),
-                        );
-                      });
-                },
-              ));
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: eachSurveyList.length,
+                          itemBuilder: (context, index) {
+                            SurveyQuestionModel questionModel =
+                                eachSurveyList[index];
+                            String text;
+                            int i = 0;
+                            while (text == null) {
+                              if (questionModel.answerModels[i].id ==
+                                  questionModel.selectedAnsIndexSingle) {
+                                text = questionModel.answerModels[i].answer;
+                              }
+                              if (text == null &&
+                                  i == questionModel.answerModels.length - 1) {
+                                text = "";
+                              }
+                              i++;
+                            }
+                            return ListTile(
+                                title: Text(questionModel.question),
+                                subtitle: (questionModel.selectionType ==
+                                        AnswerSelectionType.SINGLE_ANSWER)
+                                    ? Text(text)
+                                    : (questionModel.selectionType ==
+                                            AnswerSelectionType.MULTIPLE_ANSWER)
+                                        ? ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemCount: questionModel
+                                                .selectedAnsIndexForMultiple
+                                                .length,
+                                            itemBuilder: (context, index) {
+                                              int currentAnsIndex = questionModel
+                                                      .selectedAnsIndexForMultiple[
+                                                  index];
+                                              String text;
+                                              int i = 0;
+                                              while (text == null) {
+                                                if (questionModel
+                                                        .answerModels[i].id ==
+                                                    currentAnsIndex) {
+                                                  text = questionModel
+                                                      .answerModels[i].answer;
+                                                }
+                                                if (text == null &&
+                                                    i ==
+                                                        questionModel
+                                                                .answerModels
+                                                                .length -
+                                                            1) {
+                                                  text = "";
+                                                }
+                                                i++;
+                                              }
+                                              return Text(text);
+                                            },
+                                          )
+                                        : SizedBox());
+                          });
+                    },
+                  ));
   }
 }

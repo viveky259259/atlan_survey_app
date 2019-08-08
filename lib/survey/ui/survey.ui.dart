@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:survey_app/survey/model/survey.question.model.dart';
+import 'package:survey_app/survey/provider/db_provider.dart';
 import 'package:survey_app/survey/provider/survey.provider.dart';
 import 'package:survey_app/survey/ui/page_indicator.dart';
 import 'package:survey_app/survey/ui/survey_item.dart';
@@ -29,6 +30,7 @@ class _SurveyUiState extends State<SurveyUi> {
   }
 
   getSurveys() async {
+    SurveyDatabaseProvider.db.getSurveyedCount();
     surveyModels = await Provider.of<SurveyProvider>(context).getSurveys();
     setState(() {
       isLoading = false;
@@ -41,8 +43,11 @@ class _SurveyUiState extends State<SurveyUi> {
 //    });
   }
 
-  saveAnswers() {
+  saveAnswers() async {
     print("save");
+    var result =
+        await Provider.of<SurveyProvider>(context).saveSurvey(surveyModels);
+    print("result:$result");
   }
 
   doNext() {
@@ -56,7 +61,9 @@ class _SurveyUiState extends State<SurveyUi> {
         duration: Duration(seconds: 1), curve: ElasticOutCurve(1));
   }
 
-  onHistoryClick() {}
+  onHistoryClick() {
+    Navigator.of(context).pushNamed("/history");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -201,8 +208,11 @@ class _SurveyUiState extends State<SurveyUi> {
                   ),
                   SizedBox(
                       width: MediaQuery.of(context).size.width - 32,
-                      child: PageIndicator(currentIndexOfPage,
-                          surveyModels.length, onClickPageIndicatorItem)),
+                      child: PageIndicator(
+                          currentIndexOfPage,
+                          surveyModels.length,
+                          onClickPageIndicatorItem,
+                          surveyModels)),
                 ],
               ),
       ),

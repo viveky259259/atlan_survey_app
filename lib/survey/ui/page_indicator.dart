@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:survey_app/survey/model/survey.question.model.dart';
 
 class PageIndicator extends StatelessWidget {
   final int currentIndex;
   final int pageCount;
   Color bgDarkColor = Color(0xa13700b3);
   final Function onClick;
+  List<SurveyQuestionModel> surveyModels;
 
-  PageIndicator(this.currentIndex, this.pageCount, this.onClick);
+  PageIndicator(
+      this.currentIndex, this.pageCount, this.onClick, this.surveyModels);
 
   _indicator(bool isActive, int index) {
+    bool isAnswered = false;
+    if (surveyModels[index].selectionType ==
+        AnswerSelectionType.SINGLE_ANSWER) {
+      isAnswered = surveyModels[index].selectedAnsIndexSingle != -1;
+    } else if (surveyModels[index].selectionType ==
+        AnswerSelectionType.MULTIPLE_ANSWER) {
+      isAnswered = surveyModels[index].selectedAnsIndexForMultiple != null &&
+          surveyModels[index].selectedAnsIndexForMultiple.length > 0;
+    }
+
     return Expanded(
       child: InkWell(
         borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -40,6 +53,16 @@ class PageIndicator extends StatelessWidget {
                     color: isActive ? bgDarkColor : Colors.white, fontSize: 20),
               ),
             ),
+            isAnswered
+                ? Positioned(
+                    top: -4,
+                    right: 8,
+                    child: Icon(
+                      Icons.done,
+                      color: Colors.green,
+                    ),
+                  )
+                : SizedBox()
           ],
         ),
       ),

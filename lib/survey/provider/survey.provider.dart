@@ -30,4 +30,12 @@ class SurveyProvider with ChangeNotifier {
     }
     return _surveys;
   }
+
+  getSurveyHistory() async {
+    return await SurveyDatabaseProvider.db.getSavedSurvey();
+  }
+
+  saveSurvey(List<SurveyQuestionModel> questions) async {
+    return await SurveyDatabaseProvider.db.saveAnswers(questions);
+  }
 }

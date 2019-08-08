@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:survey_app/survey/provider/survey.provider.dart';
+import 'package:survey_app/survey/ui/survey.history.ui.dart';
 import 'package:survey_app/survey/ui/survey.ui.dart';
 
 void main() => runApp(MyApp());
@@ -25,6 +26,10 @@ class MyApp extends StatelessWidget {
       ),
       home: ChangeNotifierProvider<SurveyProvider>(
           builder: (_) => SurveyProvider(), child: SurveyUi()),
+      routes: {
+        "/history": (context) => ChangeNotifierProvider<SurveyProvider>(
+            builder: (_) => SurveyProvider(), child: SurveyHistoryUi()),
+      },
     );
   }
 }

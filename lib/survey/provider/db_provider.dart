@@ -222,7 +222,7 @@ class SurveyDatabaseProvider {
           await getUserSurveyAnswerBySurveyedId(
               eachSurvey["surveyed_count_id"], db);
       userSavedSurvey.add(getQuestionAnswers(questions, eachAnswers));
-      print(eachSurvey["surveyed_count_id"]);
+      print(1);
     }
     print(1);
     return userSavedSurvey;

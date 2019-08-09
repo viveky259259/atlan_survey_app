@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:survey_app/survey/delegate/internect_connectivity_delegate.dart';
 import 'package:survey_app/survey/model/survey.question.model.dart';
 import 'package:survey_app/survey/provider/survey.server.dart';
 
@@ -10,8 +11,10 @@ class SurveyProvider with ChangeNotifier {
   SurveyProvider();
 
   getSurveys() async {
+    bool isInternetConnected = await NetworkCheckDelegate.check();
+
     if (_surveys == null || _surveys.length == 0) {
-      _surveys = await surveyServer.getQuestions();
+      if (isInternetConnected) _surveys = await surveyServer.getQuestions();
     }
     if (_surveys != null && _surveys.length > 0) {
       List<SurveyQuestionModel> oldRecords = await SurveyDatabaseProvider.db
@@ -27,8 +30,11 @@ class SurveyProvider with ChangeNotifier {
             .getQuestionBySurveyId(_surveys.first.surveyId);
       }
       return oldRecords;
+    } else {
+      List<SurveyQuestionModel> oldRecords =
+          await SurveyDatabaseProvider.db.getAllQuestions();
+      return oldRecords;
     }
-    return _surveys;
   }
 
   getSurveyHistory() async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:survey_app/survey/delegate/snackbar_delegate.dart';
 import 'package:survey_app/survey/model/survey.question.model.dart';
 import 'package:survey_app/survey/provider/db_provider.dart';
 import 'package:survey_app/survey/provider/survey.provider.dart';
@@ -20,6 +21,7 @@ class _SurveyUiState extends State<SurveyUi> {
   int currentIndexOfPage = 0;
   Color bgColor = Color(0xff6200ee);
   Color bgDarkColor = Color(0xff3700b3);
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
   @override
   void initState() {
@@ -35,19 +37,76 @@ class _SurveyUiState extends State<SurveyUi> {
     setState(() {
       isLoading = false;
     });
-//    List<SurveyQuestionModel> oldRecords =
-//        await SurveyDatabaseProvider.db.getAllQuestions();
-//    setState(() {
-//      isLoading = false;
-//      surveyModels = oldRecords;
-//    });
   }
 
-  saveAnswers() async {
+  saveAnswers(context) async {
+    bool isEverythingCorrect = true;
+    int i = 0;
+    for (SurveyQuestionModel model in surveyModels) {
+      if (model.selectionType == AnswerSelectionType.SINGLE_ANSWER) {
+        if (model.selectedAnsIndexSingle == -1) {
+          SnackBarDelegate.showSnackBar(
+              context, "Please select one!", _scaffoldKey,
+              time: 2000);
+          print("break");
+          pageController.animateToPage(i,
+              duration: Duration(seconds: 2),
+              curve: Curves.fastLinearToSlowEaseIn);
+          isEverythingCorrect = false;
+          break;
+        }
+        i++;
+        print(1);
+      }
+    }
+    if (!isEverythingCorrect) return;
     print("save");
     var result =
         await Provider.of<SurveyProvider>(context).saveSurvey(surveyModels);
     print("result:$result");
+    showDialogOnSurveyComplete(context);
+    resetAnswers();
+  }
+
+  resetAnswers() {
+    getSurveys();
+    pageController.animateToPage(0,
+        duration: Duration(seconds: 3), curve: Curves.fastLinearToSlowEaseIn);
+  }
+
+  showDialogOnSurveyComplete(context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Survey Completed"),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(16))),
+            content: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[Text("Thanks for giving feedback")],
+              ),
+            ),
+            actions: <Widget>[
+              RaisedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                color: bgDarkColor,
+                child: Text(
+                  "Okay",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20),
+                ),
+              )
+            ],
+          );
+        });
   }
 
   doNext() {
@@ -68,6 +127,7 @@ class _SurveyUiState extends State<SurveyUi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
 //      appBar: AppBar(
 //        title: Text("Test"),
 //        actions: <Widget>[
@@ -98,7 +158,9 @@ class _SurveyUiState extends State<SurveyUi> {
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height -
+              MediaQuery.of(context).viewPadding.bottom,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
               gradient: LinearGradient(
                   colors: [bgColor, bgColor],
@@ -186,7 +248,7 @@ class _SurveyUiState extends State<SurveyUi> {
                       padding: EdgeInsets.all(16),
                       onPressed: () {
                         if (currentIndexOfPage == surveyModels.length - 1) {
-                          saveAnswers();
+                          saveAnswers(context);
                         } else {
                           doNext();
                         }
@@ -207,12 +269,18 @@ class _SurveyUiState extends State<SurveyUi> {
                     ),
                   ),
                   SizedBox(
-                      width: MediaQuery.of(context).size.width - 32,
-                      child: PageIndicator(
-                          currentIndexOfPage,
-                          surveyModels.length,
-                          onClickPageIndicatorItem,
-                          surveyModels)),
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: PageIndicator(
+                            currentIndexOfPage,
+                            surveyModels.length,
+                            onClickPageIndicatorItem,
+                            surveyModels),
+                      )),
+                  SizedBox(
+                    height: 16,
+                  )
                 ],
               ),
       ),

@@ -21,10 +21,15 @@ class SurveyQuestionModel {
   }
 
   SurveyQuestionModel copyInstance() {
-    return SurveyQuestionModel(question, answerModels, selectionType, surveyId,
+    List<int> multipleIndex = List();
+    List<SurveyAnswerModel> answers = List();
+    this.answerModels.forEach((each) {
+      answers.add(each);
+    });
+    return SurveyQuestionModel(question, answers, selectionType, surveyId,
         selectedAnsIndexSingle: selectedAnsIndexSingle,
         questionId: questionId,
-        selectedAnsIndexForMultiple: selectedAnsIndexForMultiple);
+        selectedAnsIndexForMultiple: multipleIndex);
   }
 
   factory SurveyQuestionModel.fromMap(

@@ -7,4 +7,8 @@ class SurveyAnswerModel {
   factory SurveyAnswerModel.fromMap(Map<String, dynamic> data) {
     return SurveyAnswerModel(answer: data["answer"], id: data["id"]);
   }
+
+  SurveyAnswerModel copyInstance() {
+    return SurveyAnswerModel(answer: answer, id: id);
+  }
 }

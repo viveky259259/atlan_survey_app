@@ -12,6 +12,10 @@ Features
   -- caching of http request
   -- save answers locally in database
   -- show history of user answers
-  
-  Screenshots:
-  ![alt text](https://github.com/viveky259259/atlan_survey_app/blob/master/screenshot/Screenshot_20190825-235707.jpg)
+
+
+<img src="https://github.com/viveky259259/atlan_survey_app/blob/master/screenshot/Screenshot_20190825-235707.jpg" width="220" height="420">
+  <img src="https://github.com/viveky259259/atlan_survey_app/blob/master/screenshot/Screenshot_20190825-235712.jpg" width="220" height="420">
+  <img src="https://github.com/viveky259259/atlan_survey_app/blob/master/screenshot/Screenshot_20190825-235707.jpg" width="220" height="420">
+  <img src="https://github.com/viveky259259/atlan_survey_app/blob/master/screenshot/Screenshot_20190825-235732.jpg" width="220" height="420">
+  <img src="https://github.com/viveky259259/atlan_survey_app/blob/master/screenshot/Screenshot_20190825-235748.jpg" width="220" height="420">

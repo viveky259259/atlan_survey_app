@@ -1,16 +1,17 @@
-# survey_app
+This app was made for an interview.
 
-A new Flutter Survey application.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+It contains 
+  -- Network call
+  -- Database connections (Insert,fetch,create)
+  -- Custom widgets
+  -- Provider Implementation
+  
+Features
+  -- Show survey questions
+  -- dynamic ui based on question type
+  -- caching of http request
+  -- save answers locally in database
+  -- show history of user answers
+  
+  Screenshots:
+  ![alt text](https://github.com/viveky259259/atlan_survey_app/blob/master/screenshot/Screenshot_20190825-235707.jpg)
